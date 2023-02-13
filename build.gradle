@@ -1,0 +1,96 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'jacoco'
+    id 'checkstyle'
+    id 'maven-publish'
+}
+
+//apply plugin: 'checkstyle'
+
+group = 'com.win'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+jacoco {
+    toolVersion = '0.8.5'
+    reportsDir = file("$buildDir/coverageReports")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+
+checkstyle {
+    ignoreFailures = true
+    toolVersion = '8.2'
+    //configFile = new File(rootDir, 'config/checkstyle/checkstyle.xml')
+    //configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    //configDirectory = file("$rootProject.projectDir/config/checkstyle")
+    //config = resources.text.fromFile(getcheckstyle())
+    //config = rootProject.resources.text.fromFile('config/checkstyle/checkstyle.xml')
+    System.setProperty('checkstyle.cache.file', String.format('%s/%s', buildDir, 'checkstyle.cachefile'))
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://nexusrepo.winwholesale.com:8081/repository/win-maven-releases"
+        allowInsecureProtocol = true
+    }
+    maven {
+        url "http://nexusrepo.winwholesale.com:8081/repository/win-maven-snapshots"
+        allowInsecureProtocol = true
+    }
+}
+
+bootJar {
+    archiveBaseName = 'guid-crud-service'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+    implementation 'org.apache.poi:poi:5.0.0'
+    implementation 'org.apache.poi:poi-ooxml:5.0.0'
+    implementation group: 'org.apache.commons', name: 'commons-jcs3-core', version: '3.0'
+    implementation 'junit:junit:4.13.1'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    compileOnly 'org.projectlombok:lombok'
+
+    runtimeOnly('com.h2database:h2:1.4.194')
+//    compile("com.winsupply:win-webauth-plugin:1.0.3-SNAPSHOT")
+//    compile('com.win:userinfo-client:0.1.0-SNAPSHOT')
+//    compile('com.win:company-service-client:0.1.0-SNAPSHOT')
+//    compile('org.springframework.security:spring-security-ldap:5.6.2')
+//    compile('com.winsupply:w2020-service:0.3.2-SNAPSHOT')
+//    compile('javax.validation:validation-api:2.0.1.Final')
+//    compile('org.springdoc:springdoc-openapi-ui:1.4.8')
+//    compile('org.springframework.boot:spring-boot-starter-validation')
+//    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.4'
+    runtimeOnly group: 'net.sf.jt400', name: 'jt400-jdk8', version: '9.5'
+
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
